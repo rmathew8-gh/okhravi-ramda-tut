@@ -1,0 +1,328 @@
+
+<<topLevel>>=
+<<:file: Makefile>>
+<<:file: README.md>>
+<<:file: .gitignore>>
+<<:file: package.json>>
+<<:file: LICENSE.txt>>
+
+<<:file: bin/nms-hello.js>>
+
+<<:file: test/main-test.js>>
+<<:file: lib/fp/main.js>>
+
+<<:file: lib/sample/hello.js>>
+<<:file: lib/sample/index.js>>
+<<:file: test/sample/hello-test.js>>
+
+<<:file: gen-files.py>>
+
+<<:file: Makefile>>=
+test:
+	@./node_modules/.bin/mocha -u bdd -w
+
+.PHONY: test
+
+<<:file: README.md>>=
+Node Mocha Skeleton
+===================
+
+NMS is a skeleton for building libraries in Node.JS. Clone the repo, and use it as a jumping-off point.
+
+It demonstrates the approach I've gradually developed over the years for structuring my Node.JS libraries:
+
+* it provides ready-to-run examples of the __mocha__ testing framework.
+* it demonstrates the usage of __underscore__, as a way to prettify array and object manipulation.
+* it demonstrates the usage of __optimist__, a great library for simplifying the building of command-line applications.
+
+Directory Structure
+-------------------------
+
+* __lib/__ this is where all of your applications code will be stored. I approach my design in an OOP manner; hello.js contains a Hello class, banana.js a Banana class, etc.
+* __test/__ mocha will discover any tests that you place in this directory. There is generally a corresponding library file for each test, e.g., hello.js has a corresponding hello-test.js.
+* __bin/__ files within this folder expose a command-line-interface to your application. When _npm install -g_ is run, these scripts will be installed globally.
+* __package.json__ this file serves several purposes: it provides meta-information surrounding your project: author, version, description, etc; it describes the directory structure of your project; it describes your project's dependencies, (running _npm install_ will install the dependencies described in package.json).
+* __Makefile__ the make file is used to run the Mocha test framework. _npm test_ looks for this Makefile, and uses it to execute Mocha's test suite.
+* __README.md__ a great README file is an important part of any project, take some time to learn the ins and outs of markdown.
+
+Library Dependencies
+--------------------
+
+There are a few libraries that I pull into almost every Node.JS project that I begin:
+
+* __[mocha](https://github.com/visionmedia/mocha)__ mocha is a light-weight testing framework for JavaScript. It provides both BDD and TDD interfaces, allowing you to choose whichever you feel more comfortable with.
+* __[underscore](https://github.com/documentcloud/underscore)__ underscore provides functional programming constructs: map, reduce, extend, etc. It really helps to cleanup the logic surrounding array and object manipulation my applications.
+* __[optimist](https://github.com/substack/node-optimist)__ optimst is a simple, powerful, command-line-argument parser.
+* __[sinon](https://github.com/cjohansen/Sinon.JS)__ sinon is a stand-alone testing framework. I use it specifically for its stubbing functionality.
+
+Bootstrapping Your First Project with NMS
+-----------------------------------------
+
+* Install the [current stable version of Node.JS](http://nodejs.org/download/)
+  * NPM is now packaged along with Node.JS, hooray!
+* Clone this repo _git clone git://github.com/bcoe/node-mocha-skeleton.git your-project-name_
+* Run _npm install_ within the project directory.
+* Run _npm test_.
+* all tests should pass, if they don't:
+  * try to fix any obvious dependency issues, do you have __make__ installed?
+  * is the problem my fault, create an issue on this project.
+* Modify the skeleton project to your heart's content:
+  * remove the _.git_ folder.
+  * run _git init_.
+  * add your new project as the origin, _git remote add origin your-project-name.git_
+  * edit the package.json, make it your own.
+* Once you've built a killer library, make sure to publish it on NPM:
+  * _npm adduser_
+  * _npm publish_
+  * _npm update_ when you roll new versions.
+
+Copyright
+---------
+
+Copyright (c) 2013 Benjamin Coe. See LICENSE.txt for further details.
+
+<<:file: .gitignore>>=
+lib-cov
+.DS_Store
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+node_modules
+/package-lock.json
+
+<<:file: package.json>>=
+{
+  "name": "node-mocha-skeleton",
+  "version": "0.0.1",
+  "directories": {
+    "lib": "./lib",
+    "bin": "./bin",
+    "spec": "./spec"
+  },
+  "main": "./lib/index.js",
+  "author": "Ben Coe <bencoe@gmail.com>",
+  "engines": [
+    "node"
+  ],
+  "scripts": {
+    "test": "make test"
+  },
+  "description": "A skeleton Node.JS project, with Mocha for testing.",
+  "keywords": ["skeleton", "mocha"],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bcoe/node-mocha-skeleton.git"
+  },
+  "dependencies": {
+    "mocha": ">=1.7.4",
+    "ramda": "^0.28.0"
+  }
+}
+
+<<:file: LICENSE.txt>>=
+Copyright (c) 2013 Benjamin Coe
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+<<:file: bin/nms-hello.js>>=
+#!/usr/bin/env node
+// to execute a bin script we must provide a hint as to Node's bin location.
+
+var optimist = require('optimist'),
+  Hello = require('../lib').Hello;
+
+// optimist is a great library for taking the hassle
+// out of parsing CLI options.
+var argv = optimist
+  .options('h', {
+    alias: 'hello',
+    describe: 'print hello world message.'
+  }).argv;
+
+if (argv.hello) {
+  var hello = new Hello();
+  console.log(hello.sayHello());
+} else {
+  console.log(optimist.help());
+}
+
+<<:file: test/main-test.js>>=
+var assert = require('assert'),
+    Main = require('../lib/fp/main');
+
+describe('Main', function () {
+
+    describe('#test main', function () {
+
+        it('should return the default hello message if no options are provided', function () {
+            var main = new Main();
+            assert.equal('Hello World!', main.compute());
+        });
+    });
+
+});
+
+<<:file: lib/fp/main.js>>=
+var R = require('ramda');
+var fs = require('fs');
+
+var ethPath = 'eth.csv';
+var btcPath = 'btc.csv';
+
+function compute() {
+    var readF = path => fs.readFileSync(path, { encoding: 'utf-8' });
+
+    return R.pipe(
+        R.map(readF),
+        R.map(R.split(/[\t\n]/)),
+        console.log
+    )([btcPath, ethPath]);
+}
+
+<<:file: lib/sample/hello.js>>=
+var _ = require('underscore');
+
+function Hello(opts) {
+    // Underscore's extend functionality is a great
+    // way to extend default parameters, with parameters
+    // passed in when creating a new instance of a class.
+    _.extend(this, {
+        helloMessage: 'Hello World!'
+    }, opts);
+}
+
+Hello.prototype.sayHello = function () {
+    return this.helloMessage;
+};
+
+Hello.prototype.sayHelloLater = function (callback) {
+    var _this = this;
+
+    setTimeout(function () {
+        callback(_this.helloMessage);
+    }, 250);
+};
+
+Hello.prototype.sayHelloThenSayHelloLater = function (callback) {
+    this.sayHelloLater(callback);
+    return this.sayHello();
+};
+
+// any values you set on the exports
+// object are available when you include
+// this module using a require statement.
+exports.Hello = Hello;
+
+<<:file: lib/sample/index.js>>=
+// I import all of my public modules in index.js
+// this simplifies the external interface to the API:
+//
+// var Hello = require('node-mocha-skeleton').Hello;
+//
+// vs.
+//
+// var Hello = require('node-mocha-skeleton/hello').Hello;
+exports.Hello = require('./hello').Hello;
+
+
+<<:file: test/sample/hello-test.js>>=
+var assert = require('assert'),
+    sinon = require('sinon'),
+    Hello = require('../lib').Hello;
+
+describe('Hello', function () {
+
+    // An example of synchronous testing in Mocha.
+    describe('#sayHello', function () {
+
+        it('should return the default hello message if no options are provided', function () {
+            var hello = new Hello();
+            assert.equal('Hello World!', hello.sayHello());
+        });
+
+        it('should allow the user to override the helloMessage when instantiating', function () {
+            var hello = new Hello({
+                helloMessage: '你好世界'
+            });
+            assert.equal('你好世界', hello.sayHello());
+        });
+
+    });
+
+    // An example of asynchronous testing in Mocha.
+    describe('#sayHelloLater', function () {
+
+        it('should execute callback with the hello message asynchronously', function (done) {
+            var hello = new Hello();
+            hello.sayHelloLater(function (helloMessage) {
+                assert.equal(helloMessage, 'Hello World!');
+                // calling done indicates that all asynchronous
+                // aspects of test are complete.
+                done();
+            });
+        });
+
+    });
+
+    // An example of using sinon to spy on function calls.
+    describe('#sayHelloThenSayHelloLater', function () {
+
+        it('should invoke both #sayHello and #sayHelloLater', function () {
+            var hello = new Hello();
+
+            // stub the sayHello and sayHelloLater methods
+            // with sinon.
+            hello.sayHello = sinon.spy();
+            hello.sayHelloLater = sinon.spy();
+
+            hello.sayHelloThenSayHelloLater();
+
+            assert.equal(hello.sayHello.callCount, 1);
+            assert.equal(hello.sayHelloLater.callCount, 1);
+        })
+
+    });
+});
+
+<<:file: gen-files.py>>=
+srcDir      = "/private/var/folders/0l/0hqn16dj0b502vdq5zs0s6qr0000gn/T/tmpbiwhxk40"
+chunkNames = [
+  ["Makefile" , srcDir],
+  ["README.md" , srcDir],
+  [".gitignore" , srcDir],
+  ["package.json" , srcDir],
+  ["LICENSE.txt" , srcDir],
+  ["test/main-test.js" , srcDir],
+  ["bin/nms-hello.js" , srcDir],
+  ["test/sample/hello-test.js" , srcDir],
+  ["lib/fp/main.js" , srcDir],
+  ["lib/sample/hello.js" , srcDir],
+  ["lib/sample/index.js" , srcDir],
+]
