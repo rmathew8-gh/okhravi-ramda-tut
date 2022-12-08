@@ -15,7 +15,10 @@
     "test": "make test"
   },
   "description": "A skeleton Node.JS project, with Mocha for testing.",
-  "keywords": ["skeleton", "mocha"],
+  "keywords": [
+    "skeleton",
+    "mocha"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/bcoe/node-mocha-skeleton.git"
@@ -23,5 +26,8 @@
   "dependencies": {
     "mocha": ">=1.7.4",
     "ramda": "^0.28.0"
+  },
+  "devDependencies": {
+    "lodash": "^4.17.21"
   }
 }
